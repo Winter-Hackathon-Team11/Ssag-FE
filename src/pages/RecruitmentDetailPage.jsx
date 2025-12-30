@@ -138,7 +138,7 @@ export default function RecruitmentDetailPage() {
               {Object.entries(recruitment.recommended_tools).map(([key, value]) => (
                 <div key={key} className="flex items-center justify-between">
                   <span className="text-sm text-[var(--text-article)]">
-                    {key === 'tongs' ? '집게' : key === 'bags' ? '가방' : key === 'gloves' ? '장갑' : '가위'}
+                    {key}
                   </span>
                   <span className="text-sm text-[var(--text-article)]">{value}개</span>
                 </div>
