@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { mockService } from '../mocks/mockData';
+import { apiService } from '../services/api';
 import Loading from '../components/Loading';
 
 export default function RecruitmentDetailPage() {
@@ -16,7 +16,7 @@ export default function RecruitmentDetailPage() {
   const loadRecruitmentDetail = async () => {
     setLoading(true);
     try {
-      const result = await mockService.getRecruitmentDetail(Number(id));
+      const result = await apiService.getRecruitmentDetail(Number(id));
       setRecruitment(result);
     } catch (error) {
       alert('구인글 조회 실패: ' + error.message);
@@ -35,19 +35,19 @@ export default function RecruitmentDetailPage() {
     }).replace(/\. /g, '.').replace('.', '');
   };
 
-  const handleDelete = async () => {
-    if (!confirm('정말로 이 구인글을 삭제하시겠습니까?')) {
-      return;
-    }
-
-    try {
-      await mockService.deleteRecruitment(Number(id));
-      alert('구인글이 삭제되었습니다.');
-      navigate('/recruitment');
-    } catch (error) {
-      alert('삭제 실패: ' + error.message);
-    }
-  };
+  // 삭제 기능은 백엔드 API에 없으므로 주석 처리
+  // const handleDelete = async () => {
+  //   if (!confirm('정말로 이 구인글을 삭제하시겠습니까?')) {
+  //     return;
+  //   }
+  //   try {
+  //     // 백엔드에 DELETE API 없음
+  //     alert('구인글이 삭제되었습니다.');
+  //     navigate('/recruitment');
+  //   } catch (error) {
+  //     alert('삭제 실패: ' + error.message);
+  //   }
+  // };
 
   if (loading) {
     return (

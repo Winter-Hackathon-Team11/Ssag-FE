@@ -38,11 +38,14 @@ export default function AnalysisDetailPage() {
     return null;
   }
 
+  // 백엔드는 한국어 키로 반환하므로 변환
   const trashDetails = {
-    plastic: analysis.trash_summary.plastic || 0,
-    can: analysis.trash_summary.can || 0,
-    vinyl: analysis.trash_summary.vinyl || 0,
-    other: analysis.trash_summary.other || analysis.trash_summary.net || analysis.trash_summary.glass || 0,
+    plastic: analysis.trash_summary['플라스틱'] || analysis.trash_summary.plastic || 0,
+    can: analysis.trash_summary['캔'] || analysis.trash_summary.can || 0,
+    vinyl: analysis.trash_summary['비닐'] || analysis.trash_summary.vinyl || 0,
+    other: (analysis.trash_summary['기타'] || analysis.trash_summary.other || 0) +
+           (analysis.trash_summary['망'] || analysis.trash_summary.net || 0) +
+           (analysis.trash_summary['유리'] || analysis.trash_summary.glass || 0),
   };
 
   return (

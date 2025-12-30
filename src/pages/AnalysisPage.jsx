@@ -77,11 +77,14 @@ export default function AnalysisPage() {
     }
   };
 
+  // 백엔드는 한국어 키로 반환하므로 변환
   const trashDetails = result ? {
-    plastic: result.trash_summary.plastic || 0,
-    can: result.trash_summary.can || 0,
-    vinyl: result.trash_summary.vinyl || 0,
-    other: result.trash_summary.other || result.trash_summary.net || result.trash_summary.glass || 0,
+    plastic: result.trash_summary['플라스틱'] || result.trash_summary.plastic || 0,
+    can: result.trash_summary['캔'] || result.trash_summary.can || 0,
+    vinyl: result.trash_summary['비닐'] || result.trash_summary.vinyl || 0,
+    other: (result.trash_summary['기타'] || result.trash_summary.other || 0) +
+           (result.trash_summary['망'] || result.trash_summary.net || 0) +
+           (result.trash_summary['유리'] || result.trash_summary.glass || 0),
   } : null;
 
   return (

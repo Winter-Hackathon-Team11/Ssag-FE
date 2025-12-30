@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import RecruitmentCard from '../components/RecruitmentCard';
-import { mockService } from '../mocks/mockData';
+import { apiService } from '../services/api';
 import Loading from '../components/Loading';
 
 export default function RecruitmentListPage() {
@@ -14,7 +14,7 @@ export default function RecruitmentListPage() {
   const loadRecruitments = async () => {
     setLoading(true);
     try {
-      const response = await mockService.getRecruitmentList();
+      const response = await apiService.getRecruitmentList('uploaded'); // 발행된 모집글만
       setRecruitments(response.recruitments);
     } catch (error) {
       alert('구인글 목록 조회 실패: ' + error.message);
