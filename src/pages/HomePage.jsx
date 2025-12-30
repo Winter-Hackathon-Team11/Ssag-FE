@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import RecruitmentCard from '../components/RecruitmentCard';
-import { mockService } from '../mocks/mockData';
+import { apiService } from '../services/api';
 
 export default function HomePage() {
   const navigate = useNavigate();
@@ -14,7 +14,7 @@ export default function HomePage() {
 
   const loadRecruitments = async () => {
     try {
-      const data = await mockService.getRecruitmentList();
+      const data = await apiService.getRecruitmentList('uploaded');
       // 최신 3개만 표시
       setRecruitments(data.recruitments.slice(0, 3));
     } catch (error) {

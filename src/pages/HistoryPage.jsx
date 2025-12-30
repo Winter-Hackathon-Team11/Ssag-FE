@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import RecruitmentCard from '../components/RecruitmentCard';
-import { mockRecruitments, mockMyParticipations, mockMyRecruitments } from '../mocks/mockData';
+import { apiService } from '../services/api';
 import Loading from '../components/Loading';
 
 export default function HistoryPage() {
@@ -15,18 +15,14 @@ export default function HistoryPage() {
   const loadHistory = async () => {
     setLoading(true);
     try {
-      await new Promise((resolve) => setTimeout(resolve, 500));
+      // 백엔드에 사용자별 필터링 API가 없으므로 모든 공고를 가져옴
+      const allRecruitments = await apiService.getRecruitmentList();
 
-      const myRecruited = mockRecruitments.filter((r) =>
-        mockMyRecruitments.includes(r.recruitment_id)
-      );
-
-      const myParticipated = mockRecruitments.filter((r) =>
-        mockMyParticipations.includes(r.recruitment_id)
-      );
-
-      setMyRecruitments(myRecruited);
-      setMyParticipations(myParticipated);
+      // TODO: 백엔드에 사용자 인증 및 필터링 기능 추가되면 수정 필요
+      // 현재는 임시로 모든 공고를 두 섹션에 나눠서 표시
+      const half = Math.ceil(allRecruitments.recruitments.length / 2);
+      setMyRecruitments(allRecruitments.recruitments.slice(0, half));
+      setMyParticipations(allRecruitments.recruitments.slice(half));
     } catch (error) {
       alert('이력 조회 실패: ' + error.message);
     } finally {
