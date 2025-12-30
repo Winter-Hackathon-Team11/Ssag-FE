@@ -18,6 +18,7 @@ export const mockAnalysisResults = [
     trash_summary: {
       plastic: 14,
       can: 6,
+      vinyl: 3,
       net: 1,
     },
     recommended_resources: {
