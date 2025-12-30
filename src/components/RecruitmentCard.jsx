@@ -10,12 +10,22 @@ export default function RecruitmentCard({ recruitment }) {
   };
 
   const formatDate = (dateString) => {
+    if (!dateString) return '';
+
+    // "YYYY-MM-DD" 형식이면 그대로 사용
+    if (/^\d{4}-\d{2}-\d{2}$/.test(dateString)) {
+      return dateString.replace(/-/g, '.');
+    }
+
+    // ISO 형식이면 Date로 변환
     const date = new Date(dateString);
+    if (isNaN(date.getTime())) return dateString; // Invalid Date 처리
+
     return date.toLocaleDateString('ko-KR', {
       year: 'numeric',
       month: '2-digit',
       day: '2-digit',
-    }).replace(/\. /g, '.').replace('.', '');
+    }).replace(/\. /g, '.').replace(/\.$/g, '');
   };
 
   const calculateEstimatedTime = () => {

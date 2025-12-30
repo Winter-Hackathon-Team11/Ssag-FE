@@ -163,12 +163,19 @@ class ApiService {
 
     const data = await response.json();
 
+    // content의 플레이스홀더 대체
+    let processedContent = data.content || '';
+    processedContent = processedContent
+      .replace(/\[location\]/g, data.meeting_place || '장소')
+      .replace(/\[activity_date\]/g, data.activity_date || '날짜')
+      .replace(/\[meeting_place\]/g, data.meeting_place || '장소');
+
     // 백엔드 응답을 프론트 형식에 맞게 변환
     return {
       recruitment_id: data.recruitment_id,
       image_url: `${API_BASE_URL}/uploads/${data.image_name}`,
       title: data.title,
-      content: data.content,
+      content: processedContent,
       required_people: data.required_people,
       current_applicants: 0, // 백엔드에서 제공 안 함
       recommended_tools: data.recommended_tools,
