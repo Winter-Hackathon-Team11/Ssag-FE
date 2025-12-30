@@ -13,6 +13,7 @@ export default function AnalysisPage() {
   const [analyzing, setAnalyzing] = useState(false);
   const [result, setResult] = useState(null);
   const [showForm, setShowForm] = useState(false);
+  const [creatingPost, setCreatingPost] = useState(false);
   const [formData, setFormData] = useState({
     date: '',
     location: '',
@@ -128,6 +129,7 @@ export default function AnalysisPage() {
       return;
     }
 
+    setCreatingPost(true);
     try {
       const recruitment = await apiService.createRecruitmentFromAnalysis(result.analysis_id, {
         activity_date: formData.date,
@@ -150,6 +152,8 @@ export default function AnalysisPage() {
       navigate(`/recruitment/${recruitment.recruitment_id}`);
     } catch (error) {
       alert('공고 생성 실패: ' + error.message);
+    } finally {
+      setCreatingPost(false);
     }
   };
 
@@ -363,7 +367,15 @@ export default function AnalysisPage() {
                 구인 글 생성
               </h2>
 
-              <div className="space-y-4">
+              {/* 로딩 상태 */}
+              {creatingPost && (
+                <div className="py-10">
+                  <Loading />
+                  <p className="text-center text-[var(--text-support)] mt-4 text-sm">AI가 공고를 생성하고 있습니다...</p>
+                </div>
+              )}
+
+              <div className={`space-y-4 ${creatingPost ? 'opacity-50 pointer-events-none' : ''}`}>
                 {/* 활동 날짜 */}
                 <div>
                   <label className="block text-xs font-normal text-[var(--text-article)] mb-2">활동 날짜</label>
@@ -421,13 +433,23 @@ export default function AnalysisPage() {
               <div className="fixed bottom-[78px] left-1/2 -translate-x-1/2 w-full bg-white border-t border-[var(--background-border)] px-4 py-3 flex gap-3 max-w-[480px] z-40">
                 <button
                   onClick={() => setShowForm(false)}
-                  className="flex-1 py-2 px-4 border-[1.5px] border-[var(--primary-600)] text-[var(--primary-500)] rounded-lg font-bold text-sm hover:bg-[var(--primary-50)] transition-colors"
+                  disabled={creatingPost}
+                  className={`flex-1 py-2 px-4 border-[1.5px] border-[var(--primary-600)] rounded-lg font-bold text-sm transition-colors ${
+                    creatingPost
+                      ? 'text-[var(--text-disabled)] border-[var(--netural-200)] cursor-not-allowed'
+                      : 'text-[var(--primary-500)] hover:bg-[var(--primary-50)]'
+                  }`}
                 >
                   취소
                 </button>
                 <button
                   onClick={handleGeneratePost}
-                  className="flex-1 py-2 px-4 bg-[var(--primary-500)] border-[1.5px] border-[var(--primary-600)] text-white rounded-lg font-bold text-sm hover:bg-[var(--primary-600)] transition-colors"
+                  disabled={creatingPost}
+                  className={`flex-1 py-2 px-4 border-[1.5px] rounded-lg font-bold text-sm transition-colors ${
+                    creatingPost
+                      ? 'bg-[var(--netural-200)] border-[var(--netural-200)] text-[var(--text-disabled)] cursor-not-allowed'
+                      : 'bg-[var(--primary-500)] border-[var(--primary-600)] text-white hover:bg-[var(--primary-600)]'
+                  }`}
                 >
                   AI로 공고 만들기
                 </button>
