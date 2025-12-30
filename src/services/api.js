@@ -12,11 +12,11 @@ class ApiService {
    * @param {string} location - 위치 정보 (선택)
    * @returns {Promise<Object>} 분석 결과 (analysis_id, image_name, trash_summary, recommended_resources)
    */
-  async analyzeImage(file, location = null) {
+  async analyzeImage(file, location = '') {
     const formData = new FormData();
     formData.append('image', file);
-    if (location) {
-      formData.append('location', location);
+    if (location && location.trim()) {
+      formData.append('location', location.trim());
     }
 
     const response = await fetch(`${API_BASE_URL}/analysis/image`, {
@@ -38,6 +38,34 @@ class ApiService {
       trash_summary: data.trash_summary,
       recommended_resources: data.recommended_resources,
       created_at: data.created_at,
+    };
+  }
+
+  /**
+   * 분석 이력 전체 조회 API
+   * GET /analysis/history
+   * @returns {Promise<Object>} 분석 이력 목록
+   */
+  async getAnalysisHistory() {
+    const response = await fetch(`${API_BASE_URL}/analysis/history`, {
+      method: 'GET',
+    });
+
+    if (!response.ok) {
+      throw new Error(`분석 이력 조회 실패: ${response.status}`);
+    }
+
+    const data = await response.json();
+
+    // 백엔드 응답을 프론트 형식에 맞게 변환
+    return {
+      histories: data.histories.map(item => ({
+        analysis_id: item.analysis_id,
+        image_url: `${API_BASE_URL}${item.image_url}`,
+        location: item.location || '위치 정보 없음',
+        trash_summary: item.trash_summary,
+        created_at: item.created_at,
+      })),
     };
   }
 
@@ -186,6 +214,24 @@ class ApiService {
       created_at: data.created_at,
       published_at: data.published_at,
     };
+  }
+
+  /**
+   * 공고 게시 API
+   * POST /recruitment/{recruitment_id}/publish
+   * @param {number} recruitmentId - 공고 ID
+   * @returns {Promise<Object>} 게시 결과
+   */
+  async publishRecruitment(recruitmentId) {
+    const response = await fetch(`${API_BASE_URL}/recruitment/${recruitmentId}/publish`, {
+      method: 'POST',
+    });
+
+    if (!response.ok) {
+      throw new Error(`공고 게시 실패: ${response.status}`);
+    }
+
+    return await response.json();
   }
 
   /**

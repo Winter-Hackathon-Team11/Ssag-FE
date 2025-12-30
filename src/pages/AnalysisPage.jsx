@@ -11,6 +11,7 @@ export default function AnalysisPage() {
   const [analyzing, setAnalyzing] = useState(false);
   const [result, setResult] = useState(null);
   const [showForm, setShowForm] = useState(false);
+  const [uploadLocation, setUploadLocation] = useState(''); // 이미지 업로드 시 위치
   const [formData, setFormData] = useState({
     date: '',
     location: '',
@@ -36,7 +37,7 @@ export default function AnalysisPage() {
 
     setAnalyzing(true);
     try {
-      const analysisResult = await apiService.analyzeImage(imageFile);
+      const analysisResult = await apiService.analyzeImage(imageFile, uploadLocation);
       setResult(analysisResult);
     } catch (error) {
       alert('분석 실패: ' + error.message);
@@ -50,6 +51,7 @@ export default function AnalysisPage() {
     setImageFile(null);
     setResult(null);
     setShowForm(false);
+    setUploadLocation('');
     setFormData({ date: '', location: '', note: '' });
   };
 
@@ -71,10 +73,18 @@ export default function AnalysisPage() {
         additional_note: formData.note || null,
       });
 
+      // 공고 자동 게시
+      try {
+        await apiService.publishRecruitment(recruitment.recruitment_id);
+      } catch (publishError) {
+        console.warn('공고 게시 실패:', publishError);
+        // 게시 실패해도 공고는 생성되었으므로 계속 진행
+      }
+
       // 로컬스토리지에 내가 생성한 공고로 저장
       addMyRecruitment(recruitment.recruitment_id);
 
-      alert('공고가 생성되었습니다!');
+      alert('공고가 생성 및 게시되었습니다!');
       navigate(`/recruitment/${recruitment.recruitment_id}`);
     } catch (error) {
       alert('공고 생성 실패: ' + error.message);
@@ -159,14 +169,33 @@ export default function AnalysisPage() {
         </div>
       )}
 
-      {/* 분석 시작 버튼 */}
+      {/* 위치 입력 및 분석 시작 */}
       {selectedImage && !analyzing && !result && (
-        <button
-          onClick={handleAnalyze}
-          className="w-full py-3.5 bg-[var(--primary-500)] text-white rounded-lg font-semibold text-base hover:bg-[var(--primary-600)] transition-colors"
-        >
-          분석 시작하기
-        </button>
+        <div className="space-y-3">
+          <div>
+            <label className="block text-xs font-normal text-[var(--text-article)] mb-2">촬영 위치 (선택)</label>
+            <div className="bg-white border border-[var(--background-border)] rounded-lg p-3 flex items-center gap-2">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5 text-[var(--text-support)]">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z" />
+              </svg>
+              <input
+                type="text"
+                value={uploadLocation}
+                onChange={(e) => setUploadLocation(e.target.value)}
+                className="flex-1 outline-none text-sm"
+                placeholder="예: 광안리 해수욕장"
+              />
+            </div>
+          </div>
+
+          <button
+            onClick={handleAnalyze}
+            className="w-full py-3.5 bg-[var(--primary-500)] text-white rounded-lg font-semibold text-base hover:bg-[var(--primary-600)] transition-colors"
+          >
+            분석 시작하기
+          </button>
+        </div>
       )}
 
       {/* 분석 결과 */}
