@@ -1,9 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { mockService } from '../mocks/mockData';
-import { mapRecruitmentToUI } from '../service';
-import Card from '../components/Card';
-import Button from '../components/Button';
 import Loading from '../components/Loading';
 
 export default function RecruitmentDetailPage() {
@@ -20,8 +17,7 @@ export default function RecruitmentDetailPage() {
     setLoading(true);
     try {
       const result = await mockService.getRecruitmentDetail(Number(id));
-      const uiData = mapRecruitmentToUI(result);
-      setRecruitment(uiData);
+      setRecruitment(result);
     } catch (error) {
       alert('구인글 조회 실패: ' + error.message);
       navigate('/recruitment');
@@ -32,12 +28,11 @@ export default function RecruitmentDetailPage() {
 
   const formatDate = (dateString) => {
     const date = new Date(dateString);
-    return new Intl.DateTimeFormat('ko-KR', {
+    return date.toLocaleDateString('ko-KR', {
       year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-      weekday: 'long',
-    }).format(date);
+      month: '2-digit',
+      day: '2-digit',
+    }).replace(/\. /g, '.').replace('.', '');
   };
 
   const handleDelete = async () => {
@@ -54,12 +49,6 @@ export default function RecruitmentDetailPage() {
     }
   };
 
-  const handleViewAnalysis = () => {
-    if (recruitment?.analysisId) {
-      navigate(`/analysis/${recruitment.analysisId}`);
-    }
-  };
-
   if (loading) {
     return (
       <div className="flex justify-center items-center min-h-[50vh]">
@@ -72,95 +61,115 @@ export default function RecruitmentDetailPage() {
     return null;
   }
 
+  const isRecruiting = recruitment.status === 'recruiting';
+
   return (
-    <div className="px-4 py-4 max-w-2xl mx-auto">
-      <div className="mb-2 px-1">
-        <Button variant="text" onClick={() => navigate('/recruitment')} className="!px-0 !py-2 text-[17px] text-ios-blue hover:opacity-60">
-          <span className="flex items-center gap-1">
-            <svg width="12" height="20" viewBox="0 0 12 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M11 1L2 10L11 19" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
-            목록
-          </span>
-        </Button>
+    <div className="px-4 py-0 max-w-2xl mx-auto pb-24">
+      {/* 헤더 */}
+      <div className="mb-3 pt-1 px-1 flex items-center gap-2">
+        <button
+          onClick={() => navigate(-1)}
+          className="text-[var(--text-article)] flex items-center gap-1"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
+          </svg>
+        </button>
+        <h1 className="text-[28px] font-semibold text-[var(--text-headline)] tracking-tight leading-snug">
+          공고 상세
+        </h1>
       </div>
 
-      <div className="flex flex-col gap-6">
-        <div className="px-2">
-          <h1 className="text-[28px] font-bold text-ios-text-primary leading-tight mb-2">{recruitment.title}</h1>
-          <div className="flex items-center gap-2">
-            <span className="px-2 py-0.5 bg-ios-green/10 text-ios-green rounded-md text-[13px] font-semibold">모집 중</span>
-            <span className="text-[13px] text-ios-text-secondary">
-               {new Date(recruitment.createdAt).toLocaleDateString()}
+      {/* 이미지 */}
+      {recruitment.image_url && (
+        <div className="h-[192px] bg-white rounded-xl overflow-hidden mb-4">
+          <img src={recruitment.image_url} alt={recruitment.title} className="w-full h-full object-cover" />
+        </div>
+      )}
+
+      <div className="space-y-4">
+        {/* 공고 제목 및 정보 */}
+        <div className="bg-white rounded-xl p-4">
+          <h2 className="text-[22px] font-semibold text-[var(--text-headline)] mb-2 leading-snug">
+            {recruitment.title}
+          </h2>
+          <div className="flex items-center gap-2 mb-3">
+            <span className="text-sm text-[var(--text-support)]">
+              {formatDate(recruitment.activity_date)}
+            </span>
+            <span className="text-[var(--text-support)]">·</span>
+            <span className="text-sm text-[var(--text-support)]">
+              {recruitment.meeting_place}
             </span>
           </div>
-        </div>
-
-        <div>
-          <h2 className="text-[13px] font-semibold text-ios-text-secondary uppercase px-4 mb-1.5">모집 정보</h2>
-          <Card className="!p-0">
-            <div className="divide-y divide-ios-separator/20">
-              <div className="flex justify-between items-center p-4">
-                <span className="text-[17px] text-ios-text-primary">활동 날짜</span>
-                <span className="text-[17px] text-ios-text-secondary">{formatDate(recruitment.activityDate)}</span>
-              </div>
-              <div className="flex justify-between items-center p-4">
-                <span className="text-[17px] text-ios-text-primary">집합 장소</span>
-                <span className="text-[17px] text-ios-text-secondary">{recruitment.meetingPlace}</span>
-              </div>
-              <div className="flex justify-between items-center p-4">
-                <span className="text-[17px] text-ios-text-primary">모집 인원</span>
-                <span className="text-[17px] font-semibold text-ios-blue">{recruitment.requiredPeople}명</span>
-              </div>
-            </div>
-          </Card>
-        </div>
-
-        <div>
-           <h2 className="text-[13px] font-semibold text-ios-text-secondary uppercase px-4 mb-1.5">활동 내용</h2>
-           <Card>
-             <p className="text-[17px] text-ios-text-primary leading-relaxed whitespace-pre-line">
-               {recruitment.content}
-             </p>
-           </Card>
-        </div>
-
-        {recruitment.additionalNote && (
-          <div>
-            <h2 className="text-[13px] font-semibold text-ios-text-secondary uppercase px-4 mb-1.5">추가 안내사항</h2>
-            <Card>
-              <p className="text-[17px] text-ios-orange leading-relaxed">
-                {recruitment.additionalNote}
-              </p>
-            </Card>
-          </div>
-        )}
-
-        <div>
-          <h2 className="text-[13px] font-semibold text-ios-text-secondary uppercase px-4 mb-1.5">제공 도구</h2>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 px-1">
-            {recruitment.tools.map((tool, index) => (
-              <div key={index} className="flex flex-col items-center justify-center p-4 bg-white rounded-xl shadow-sm">
-                <span className="text-[13px] text-ios-text-secondary mb-1">{tool.type}</span>
-                <span className="text-[20px] font-bold text-ios-text-primary">{tool.count}개</span>
-              </div>
-            ))}
-          </div>
-          <p className="text-[13px] text-ios-text-secondary text-center mt-2 px-4">
-            * 모든 도구는 현장에서 무료로 제공됩니다.
+          <p className="text-sm text-[var(--text-article)] leading-relaxed whitespace-pre-line">
+            {recruitment.content}
           </p>
         </div>
 
-        <div className="flex flex-col gap-3 mt-4 mb-8 px-1">
-          {recruitment.analysisId && (
-            <Button variant="secondary" onClick={handleViewAnalysis} fullWidth size="large">
-              원본 분석 결과 보기
-            </Button>
-          )}
-          <Button variant="danger" onClick={handleDelete} fullWidth size="large">
-            구인글 삭제
-          </Button>
+        {/* 필요 인원 */}
+        <div>
+          <h3 className="text-lg font-semibold text-black mb-2">필요 인원</h3>
+          <div className="bg-white rounded-xl p-4">
+            <div className="flex items-center justify-between">
+              <span className="text-base text-[var(--text-article)]">모집 인원</span>
+              <span className="text-xl font-semibold text-[var(--text-article)]">
+                {recruitment.required_people}명
+              </span>
+            </div>
+          </div>
         </div>
+
+        {/* 지원 물품 */}
+        <div>
+          <h3 className="text-lg font-semibold text-black mb-2">지원 물품</h3>
+          <div className="bg-white rounded-xl overflow-hidden">
+            <div className="p-4 space-y-2">
+              {Object.entries(recruitment.recommended_tools).map(([key, value]) => (
+                <div key={key} className="flex items-center justify-between">
+                  <span className="text-sm text-[var(--text-article)]">
+                    {key === 'tongs' ? '집게' : key === 'bags' ? '가방' : key === 'gloves' ? '장갑' : '가위'}
+                  </span>
+                  <span className="text-sm text-[var(--text-article)]">{value}개</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* 추가 노트 */}
+        {recruitment.additional_note && (
+          <div className="bg-[var(--primary-50)] border border-[var(--primary-200)] rounded-xl p-4">
+            <p className="text-sm text-[var(--primary-700)]">
+              📌 {recruitment.additional_note}
+            </p>
+          </div>
+        )}
+      </div>
+
+      {/* 하단 버튼 */}
+      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-[var(--background-border)] p-4 flex gap-2 max-w-[480px] mx-auto">
+        <button
+          onClick={() => navigate(-1)}
+          className="flex-1 py-3 border border-[var(--background-border)] text-[var(--text-article)] rounded-lg font-medium hover:bg-gray-50 transition-colors"
+        >
+          취소
+        </button>
+        <button
+          onClick={() => {
+            if (isRecruiting) {
+              alert('참가 신청이 완료되었습니다!');
+            }
+          }}
+          disabled={!isRecruiting}
+          className={`flex-1 py-3 rounded-lg font-medium transition-colors ${
+            isRecruiting
+              ? 'bg-[var(--primary-500)] text-white hover:bg-[var(--primary-600)]'
+              : 'bg-[var(--netural-200)] text-[var(--text-disabled)] cursor-not-allowed'
+          }`}
+        >
+          {isRecruiting ? '참여하기' : '모집 종료'}
+        </button>
       </div>
     </div>
   );
