@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { apiService } from '../services/api';
+import { addMyRecruitment } from '../utils/localStorage';
 import Loading from '../components/Loading';
 
 export default function AnalysisPage() {
@@ -69,6 +70,9 @@ export default function AnalysisPage() {
         meeting_place: formData.location,
         additional_note: formData.note || null,
       });
+
+      // 로컬스토리지에 내가 생성한 공고로 저장
+      addMyRecruitment(recruitment.recruitment_id);
 
       alert('공고가 생성되었습니다!');
       navigate(`/recruitment/${recruitment.recruitment_id}`);

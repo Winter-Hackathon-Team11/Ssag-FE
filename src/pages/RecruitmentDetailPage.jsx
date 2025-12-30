@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { apiService } from '../services/api';
+import { addMyParticipation } from '../utils/localStorage';
 import Loading from '../components/Loading';
 
 export default function RecruitmentDetailPage() {
@@ -168,6 +169,7 @@ export default function RecruitmentDetailPage() {
         <button
           onClick={() => {
             if (isRecruiting) {
+              addMyParticipation(Number(id));
               alert('참가 신청이 완료되었습니다!');
             }
           }}

@@ -1,4 +1,5 @@
 import { useNavigate } from 'react-router-dom';
+import { addMyParticipation } from '../utils/localStorage';
 
 export default function RecruitmentCard({ recruitment }) {
   const navigate = useNavigate();
@@ -90,6 +91,7 @@ export default function RecruitmentCard({ recruitment }) {
             onClick={(e) => {
               e.stopPropagation();
               if (isRecruiting) {
+                addMyParticipation(recruitment.recruitment_id);
                 alert('참가 신청이 완료되었습니다!');
               }
             }}
