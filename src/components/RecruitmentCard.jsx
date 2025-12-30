@@ -36,7 +36,16 @@ export default function RecruitmentCard({ recruitment }) {
           alt={recruitment.title}
           className="w-full h-full object-cover"
         />
-        <div className="absolute inset-0 bg-black/25" />
+        <div className={`absolute inset-0 ${isRecruiting ? 'bg-black/25' : 'bg-black/50'}`} />
+
+        {/* 모집 종료 텍스트 */}
+        {!isRecruiting && (
+          <div className="absolute inset-0 flex items-center justify-center">
+            <p className="text-lg font-semibold text-white tracking-tight">
+              모집 종료된 공고입니다.
+            </p>
+          </div>
+        )}
 
         {/* 날짜 배지 */}
         <div className="absolute top-2 right-2 px-1 py-0.5 rounded-md bg-white/60 backdrop-blur-sm border border-white/60">
@@ -66,18 +75,17 @@ export default function RecruitmentCard({ recruitment }) {
             className={`px-2 py-1.5 rounded-lg text-sm font-normal transition-colors ${
               isRecruiting
                 ? 'bg-[var(--primary-500)] text-white hover:bg-[var(--primary-600)]'
-                : 'bg-[var(--netural-200)] text-[var(--text-disabled)] cursor-not-allowed'
+                : 'bg-[var(--text-disabled)] text-white cursor-default'
             }`}
             onClick={(e) => {
               e.stopPropagation();
               if (isRecruiting) {
-                // 참가하기 로직
                 alert('참가 신청이 완료되었습니다!');
               }
             }}
             disabled={!isRecruiting}
           >
-            {isRecruiting ? '참가하기 →' : '모집 종료'}
+            {isRecruiting ? '참가하기 →' : '참가 완료'}
           </button>
         </div>
       </div>
