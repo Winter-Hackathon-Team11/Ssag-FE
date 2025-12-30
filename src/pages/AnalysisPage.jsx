@@ -254,16 +254,16 @@ export default function AnalysisPage() {
           </div>
 
           {/* 버튼들 */}
-          <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-[var(--background-border)] p-4 flex gap-2 max-w-[480px] mx-auto">
+          <div className="fixed bottom-[78px] left-1/2 -translate-x-1/2 w-full bg-white border-t border-[var(--background-border)] px-4 py-3 flex gap-3 max-w-[480px] z-40">
             <button
               onClick={handleReset}
-              className="flex-1 py-3 border border-[var(--background-border)] text-[var(--text-article)] rounded-lg font-medium hover:bg-gray-50 transition-colors"
+              className="flex-1 py-2 px-4 border-[1.5px] border-[var(--primary-600)] text-[var(--primary-500)] rounded-lg font-bold text-sm hover:bg-[var(--primary-50)] transition-colors"
             >
               취소
             </button>
             <button
               onClick={handleCreateRecruitment}
-              className="flex-1 py-3 bg-[var(--primary-500)] text-white rounded-lg font-medium hover:bg-[var(--primary-600)] transition-colors"
+              className="flex-1 py-2 px-4 bg-[var(--primary-500)] border-[1.5px] border-[var(--primary-600)] text-white rounded-lg font-bold text-sm hover:bg-[var(--primary-600)] transition-colors"
             >
               공고 만들기
             </button>
@@ -333,16 +333,16 @@ export default function AnalysisPage() {
           </div>
 
           {/* 버튼들 */}
-          <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-[var(--background-border)] p-4 flex gap-2 max-w-[480px] mx-auto">
+          <div className="fixed bottom-[78px] left-1/2 -translate-x-1/2 w-full bg-white border-t border-[var(--background-border)] px-4 py-3 flex gap-3 max-w-[480px] z-40">
             <button
               onClick={() => setShowForm(false)}
-              className="flex-1 py-3 border border-[var(--background-border)] text-[var(--text-article)] rounded-lg font-medium hover:bg-gray-50 transition-colors"
+              className="flex-1 py-2 px-4 border-[1.5px] border-[var(--primary-600)] text-[var(--primary-500)] rounded-lg font-bold text-sm hover:bg-[var(--primary-50)] transition-colors"
             >
               취소
             </button>
             <button
               onClick={handleGeneratePost}
-              className="flex-1 py-3 bg-[var(--primary-500)] text-white rounded-lg font-medium hover:bg-[var(--primary-600)] transition-colors"
+              className="flex-1 py-2 px-4 bg-[var(--primary-500)] border-[1.5px] border-[var(--primary-600)] text-white rounded-lg font-bold text-sm hover:bg-[var(--primary-600)] transition-colors"
             >
               AI로 공고 만들기
             </button>

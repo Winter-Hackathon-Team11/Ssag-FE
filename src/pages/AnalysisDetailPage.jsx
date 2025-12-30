@@ -49,7 +49,7 @@ export default function AnalysisDetailPage() {
   };
 
   return (
-    <div className="px-4 py-0 max-w-2xl mx-auto pb-6">
+    <div className="px-4 py-0 max-w-2xl mx-auto pb-24">
       {/* 헤더 */}
       <div className="mb-3 pt-1 px-1 flex items-center gap-2">
         <button
@@ -133,10 +133,13 @@ export default function AnalysisDetailPage() {
           </div>
         </div>
 
-        {/* 버튼 */}
+      </div>
+
+      {/* 하단 고정 버튼 */}
+      <div className="fixed bottom-[78px] left-1/2 -translate-x-1/2 w-full bg-white border-t border-[var(--background-border)] px-4 py-3 max-w-[480px] z-40">
         <button
           onClick={() => navigate(`/recruitment/create/${id}`)}
-          className="w-full py-3.5 bg-[var(--primary-500)] text-white rounded-lg font-semibold text-base hover:bg-[var(--primary-600)] transition-colors mt-4"
+          className="w-full py-3 bg-[var(--primary-500)] text-white rounded-lg font-semibold text-base hover:bg-[var(--primary-600)] transition-colors"
         >
           이 분석으로 공고 만들기
         </button>
