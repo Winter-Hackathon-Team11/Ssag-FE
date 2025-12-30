@@ -2,8 +2,6 @@
 @import "tailwindcss";
 
 @theme {
-  --font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-
   /* iOS System Colors (Light Mode) */
   --color-ios-blue: #007AFF;
   --color-ios-green: #34C759;
@@ -30,8 +28,48 @@
 }
 
 :root {
-  --background: var(--color-ios-grouped-background);
-  --foreground: var(--color-ios-text-primary);
+  --font-sans: "Pretendard Variable", -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+
+  --primary-50: #E7EFFB;
+  --primary-100: #B3CDF3;
+  --primary-200: #8FB5ED;
+  --primary-300: #5C93E4;
+  --primary-400: #3C7EDF;
+  --primary-500: #0B5ED7;
+  --primary-600: #0A56C4;
+  --primary-700: #084399;
+  --primary-800: #063476;
+  --primary-900: #05275A;
+  
+  --netural-50: #F0F1F2;
+  --netural-100: #D1D3D8;
+  --netural-200: #BBBEC5;
+  --netural-300: #9CA1AA;
+  --netural-400: #898E99;
+  --netural-500: #6B7280;
+  --netural-600: #616874;
+  --netural-700: #4C515B;
+  --netural-800: #3B3F46;
+  --netural-900: #2D3036;
+
+  --semantic-danger: #DC2626;
+  --semantic-warning: #DC9C26;
+  --semantic-success: #16A34A;
+
+  --text-headline: #1A1A1A;
+  --text-article: #333333;
+  --text-support: #666666;
+  --text-disabled: #888888;
+
+  --background: #F9FAFB;
+  --background-border: #E5E5E5;
+
+  --font-h1: 600 28px/140% var(--font-sans);
+  --font-h2: 600 22px/140% var(--font-sans);
+  --font-h3: 600 18px/140% var(--font-sans);
+  --font-body: 400 14px var(--font-sans);
+  --font-caption: 400 12px var(--font-sans);
+  --foreground: var(--text-article);
   font-family: var(--font-sans);
   background-color: var(--background);
   color: var(--foreground);
