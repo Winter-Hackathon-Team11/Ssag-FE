@@ -11,7 +11,6 @@ export default function AnalysisPage() {
   const [analyzing, setAnalyzing] = useState(false);
   const [result, setResult] = useState(null);
   const [showForm, setShowForm] = useState(false);
-  const [uploadLocation, setUploadLocation] = useState(''); // 이미지 업로드 시 위치
   const [formData, setFormData] = useState({
     date: '',
     location: '',
@@ -37,7 +36,7 @@ export default function AnalysisPage() {
 
     setAnalyzing(true);
     try {
-      const analysisResult = await apiService.analyzeImage(imageFile, uploadLocation);
+      const analysisResult = await apiService.analyzeImage(imageFile);
       setResult(analysisResult);
     } catch (error) {
       alert('분석 실패: ' + error.message);
@@ -169,33 +168,14 @@ export default function AnalysisPage() {
         </div>
       )}
 
-      {/* 위치 입력 및 분석 시작 */}
+      {/* 분석 시작 버튼 */}
       {selectedImage && !analyzing && !result && (
-        <div className="space-y-3">
-          <div>
-            <label className="block text-xs font-normal text-[var(--text-article)] mb-2">촬영 위치 (선택)</label>
-            <div className="bg-white border border-[var(--background-border)] rounded-lg p-3 flex items-center gap-2">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5 text-[var(--text-support)]">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
-                <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z" />
-              </svg>
-              <input
-                type="text"
-                value={uploadLocation}
-                onChange={(e) => setUploadLocation(e.target.value)}
-                className="flex-1 outline-none text-sm"
-                placeholder="예: 광안리 해수욕장"
-              />
-            </div>
-          </div>
-
-          <button
-            onClick={handleAnalyze}
-            className="w-full py-3.5 bg-[var(--primary-500)] text-white rounded-lg font-semibold text-base hover:bg-[var(--primary-600)] transition-colors"
-          >
-            분석 시작하기
-          </button>
-        </div>
+        <button
+          onClick={handleAnalyze}
+          className="w-full py-3.5 bg-[var(--primary-500)] text-white rounded-lg font-semibold text-base hover:bg-[var(--primary-600)] transition-colors"
+        >
+          분석 시작하기
+        </button>
       )}
 
       {/* 분석 결과 */}
