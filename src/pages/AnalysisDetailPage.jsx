@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { mockService } from '../mocks/mockData';
+import { apiService } from '../services/api';
 import Loading from '../components/Loading';
 
 export default function AnalysisDetailPage() {
@@ -16,11 +16,11 @@ export default function AnalysisDetailPage() {
   const loadAnalysisDetail = async () => {
     setLoading(true);
     try {
-      const result = await mockService.getAnalysisDetail(Number(id));
+      const result = await apiService.getAnalysisDetail(Number(id));
       setAnalysis(result);
     } catch (error) {
       alert('분석 결과 조회 실패: ' + error.message);
-      navigate('/history');
+      navigate('/analysis');
     } finally {
       setLoading(false);
     }

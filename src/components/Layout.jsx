@@ -14,8 +14,8 @@ export default function Layout({ children }) {
   };
 
   return (
-    <div className="min-h-screen bg-ios-grouped-background flex justify-center font-sans text-ios-text-primary selection:bg-ios-blue/30">
-      <div className="w-full max-w-[480px] bg-ios-grouped-background min-h-screen shadow-2xl flex flex-col relative overflow-hidden">
+    <div className="min-h-screen bg-[var(--background)] flex justify-center font-sans selection:bg-ios-blue/30">
+      <div className="w-full max-w-[480px] bg-[var(--background)] min-h-screen shadow-2xl flex flex-col relative overflow-hidden">
 
         {/* Main Content Area - with padding for bottom tab bar */}
         <main className="flex-1 pb-[83px] pt-4 overflow-y-auto no-scrollbar">

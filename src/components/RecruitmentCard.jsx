@@ -26,7 +26,7 @@ export default function RecruitmentCard({ recruitment }) {
 
   return (
     <div
-      className="bg-white rounded-xl overflow-hidden cursor-pointer active:opacity-90 transition-opacity relative"
+      className="bg-[var(--background)] rounded-xl overflow-hidden cursor-pointer active:opacity-90 transition-opacity relative"
       onClick={handleClick}
     >
       {/* 이미지 */}

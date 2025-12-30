@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { mockService } from '../mocks/mockData';
+import { apiService } from '../services/api';
 import Loading from '../components/Loading';
 
 export default function AnalysisPage() {
@@ -31,13 +31,12 @@ export default function AnalysisPage() {
   };
 
   const handleAnalyze = async () => {
-    if (!selectedImage) return;
+    if (!imageFile) return;
 
     setAnalyzing(true);
     try {
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      const mockResult = await mockService.analyzeImage(imageFile);
-      setResult(mockResult);
+      const analysisResult = await apiService.analyzeImage(imageFile);
+      setResult(analysisResult);
     } catch (error) {
       alert('분석 실패: ' + error.message);
     } finally {
@@ -65,10 +64,10 @@ export default function AnalysisPage() {
     }
 
     try {
-      const recruitment = await mockService.createRecruitmentFromAnalysis(result.analysis_id, {
+      const recruitment = await apiService.createRecruitmentFromAnalysis(result.analysis_id, {
         activity_date: formData.date,
         meeting_place: formData.location,
-        additional_note: formData.note || '없음',
+        additional_note: formData.note || null,
       });
 
       alert('공고가 생성되었습니다!');
