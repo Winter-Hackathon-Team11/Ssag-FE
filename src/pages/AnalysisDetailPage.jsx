@@ -1,9 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { mockService } from '../mocks/mockData';
-import { mapAnalysisResultToUI } from '../service';
-import Card from '../components/Card';
-import Button from '../components/Button';
+import { apiService } from '../services/api';
 import Loading from '../components/Loading';
 
 export default function AnalysisDetailPage() {
@@ -19,25 +16,14 @@ export default function AnalysisDetailPage() {
   const loadAnalysisDetail = async () => {
     setLoading(true);
     try {
-      const result = await mockService.getAnalysisDetail(Number(id));
-      const uiData = mapAnalysisResultToUI(result);
-      setAnalysis(uiData);
+      const result = await apiService.getAnalysisDetail(Number(id));
+      setAnalysis(result);
     } catch (error) {
       alert('분석 결과 조회 실패: ' + error.message);
-      navigate('/history');
+      navigate('/analysis');
     } finally {
       setLoading(false);
     }
-  };
-
-  const formatDate = (date) => {
-    return new Intl.DateTimeFormat('ko-KR', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-    }).format(date);
   };
 
   if (loading) {
@@ -52,103 +38,104 @@ export default function AnalysisDetailPage() {
     return null;
   }
 
+  // 백엔드는 한글 키로 반환 - 그대로 사용
+  const trashDetails = analysis.trash_summary;
+
   return (
-    <div className="px-4 py-4 max-w-2xl mx-auto">
-      <div className="mb-2 px-1">
-        <Button variant="text" onClick={() => navigate('/history')} className="!px-0 !py-2 text-[17px] text-ios-blue hover:opacity-60">
-           <span className="flex items-center gap-1">
-            <svg width="12" height="20" viewBox="0 0 12 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M11 1L2 10L11 19" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
-            이력
-          </span>
-        </Button>
+    <div className="px-4 py-0 max-w-2xl mx-auto pb-24">
+      {/* 헤더 */}
+      <div className="mb-3 pt-1 px-1 flex items-center gap-2">
+        <button
+          onClick={() => navigate(-1)}
+          className="text-[var(--text-article)] flex items-center gap-1"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
+          </svg>
+        </button>
+        <h1 className="text-[28px] font-semibold text-[var(--text-headline)] tracking-tight leading-snug">
+          분석 상세
+        </h1>
       </div>
 
-      <div className="flex flex-col gap-6">
-        <div className="px-2">
-           <h1 className="text-[28px] font-bold text-ios-text-primary leading-tight mb-2">분석 상세</h1>
-           <p className="text-[15px] text-ios-text-secondary">{formatDate(analysis.createdAt)}</p>
+      {/* 이미지 */}
+      {analysis.image_url && (
+        <div className="h-[192px] bg-white rounded-xl overflow-hidden mb-4">
+          <img src={analysis.image_url} alt={analysis.location} className="w-full h-full object-cover" />
         </div>
+      )}
 
-        <Card className="!p-0 overflow-hidden">
-          <img src={analysis.imageUrl} alt={analysis.location} className="w-full h-auto object-cover max-h-[350px]" />
-        </Card>
-
-        <div>
-          <h2 className="text-[13px] font-semibold text-ios-text-secondary uppercase px-4 mb-1.5">위치 정보</h2>
-          <Card className="!p-0">
-             <div className="flex justify-between items-center p-4">
-                <span className="text-[17px] text-ios-text-primary font-semibold">{analysis.location}</span>
-                <span className="text-[15px] text-ios-text-secondary bg-ios-gray6 px-2 py-1 rounded">{analysis.areaType}</span>
-             </div>
-          </Card>
-        </div>
-
-        <div>
-           <h2 className="text-[13px] font-semibold text-ios-text-secondary uppercase px-4 mb-1.5">분석 요약</h2>
-           <Card className="!p-0">
-              <div className="p-4 grid grid-cols-3 divide-x divide-ios-separator/20">
-                  <div className="flex flex-col items-center gap-1">
-                      <span className="text-[11px] text-ios-text-secondary uppercase font-semibold">총 쓰레기</span>
-                      <span className="text-[20px] font-bold text-ios-blue">{analysis.trashSummary.total}</span>
-                  </div>
-                  <div className="flex flex-col items-center gap-1">
-                      <span className="text-[11px] text-ios-text-secondary uppercase font-semibold">권장 인원</span>
-                      <span className="text-[20px] font-bold text-ios-green">{analysis.resources.people}명</span>
-                  </div>
-                  <div className="flex flex-col items-center gap-1">
-                      <span className="text-[11px] text-ios-text-secondary uppercase font-semibold">예상 시간</span>
-                      <span className="text-[20px] font-bold text-ios-orange">{analysis.resources.estimatedTime}분</span>
-                  </div>
-              </div>
-           </Card>
-        </div>
-
-        <div>
-          <h2 className="text-[13px] font-semibold text-ios-text-secondary uppercase px-4 mb-1.5">쓰레기 상세</h2>
-          <Card className="!p-0">
-            <ul className="divide-y divide-ios-separator/20">
-              {analysis.trashSummary.items.map((item, index) => (
-                <li key={index} className="flex justify-between items-center p-4">
-                  <span className="text-[17px] text-ios-text-primary">{item.type}</span>
-                  <span className="text-[17px] text-ios-text-secondary">{item.count}개</span>
-                </li>
-              ))}
-            </ul>
-          </Card>
-        </div>
-
-        <div>
-          <h2 className="text-[13px] font-semibold text-ios-text-secondary uppercase px-4 mb-1.5">필요 도구</h2>
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 px-1">
-             {analysis.resources.tools.map((tool, index) => (
-               <div key={index} className="bg-white p-3 rounded-xl flex flex-col items-center shadow-sm">
-                 <span className="text-[13px] text-ios-text-secondary mb-1">{tool.type}</span>
-                 <span className="text-[17px] font-bold text-ios-text-primary">{tool.count}개</span>
-               </div>
-             ))}
+      <div className="space-y-4">
+        {/* 위치 정보 */}
+        <div className="bg-white rounded-xl p-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <h2 className="text-lg font-semibold text-[var(--text-headline)] mb-1">
+                {analysis.location}
+              </h2>
+              <p className="text-sm text-[var(--text-support)]">{analysis.area_type}</p>
+            </div>
           </div>
         </div>
 
-        <div className="flex flex-col gap-3 mt-4 mb-8 px-1">
-           <Button
-              variant="primary"
-              size="large"
-              onClick={() => navigate(`/recruitment/create/${id}`)}
-              fullWidth
-              className="shadow-sm"
-            >
-              구인글 작성하기
-            </Button>
-            <Button
-              variant="secondary"
-              onClick={() => navigate('/recruitment')}
-              fullWidth
-            >
-              구인글 목록 보기
-            </Button>
+        {/* 분석 결과 */}
+        <div>
+          <h3 className="text-lg font-semibold text-black mb-2">분석 결과</h3>
+          <div className="bg-white rounded-xl overflow-hidden">
+            <div className="p-4 space-y-2">
+              {Object.entries(trashDetails).map(([key, value]) => (
+                <div key={key} className="flex items-center justify-between">
+                  <span className="text-sm text-[var(--text-article)]">
+                    {key}
+                  </span>
+                  <span className="text-sm text-[var(--text-article)]">{value}개</span>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
+
+        {/* 자원 추천 */}
+        <div>
+          <h3 className="text-lg font-semibold text-black mb-2">자원 추천</h3>
+          <div className="bg-white rounded-xl overflow-hidden">
+            <div className="p-4 space-y-2">
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-[var(--text-article)]">사람</span>
+                <span className="text-sm text-[var(--text-article)]">{analysis.recommended_resources.people}명</span>
+              </div>
+              {Object.entries(analysis.recommended_resources.tools).map(([key, value]) => (
+                <div key={key} className="flex items-center justify-between">
+                  <span className="text-sm text-[var(--text-article)]">
+                    {key}
+                  </span>
+                  <span className="text-sm text-[var(--text-article)]">{value}개</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* 예상 소요 시간 */}
+        <div>
+          <h3 className="text-lg font-semibold text-black mb-2">예상 소요 시간</h3>
+          <div className="bg-white rounded-xl p-4">
+            <p className="text-xl font-semibold text-[var(--text-article)]">
+              {analysis.recommended_resources.estimated_time_min}분
+            </p>
+          </div>
+        </div>
+
+      </div>
+
+      {/* 하단 고정 버튼 */}
+      <div className="fixed bottom-[78px] left-1/2 -translate-x-1/2 w-full bg-white border-t border-[var(--background-border)] px-4 py-3 max-w-[480px] z-40">
+        <button
+          onClick={() => navigate(`/recruitment/create/${id}`)}
+          className="w-full py-3 bg-[var(--primary-500)] text-white rounded-lg font-semibold text-base hover:bg-[var(--primary-600)] transition-colors"
+        >
+          이 분석으로 공고 만들기
+        </button>
       </div>
     </div>
   );
