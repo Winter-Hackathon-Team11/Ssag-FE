@@ -6,6 +6,7 @@
 const STORAGE_KEYS = {
   MY_RECRUITMENTS: 'my_recruitments', // 내가 생성한 공고
   MY_PARTICIPATIONS: 'my_participations', // 내가 참여한 공고
+  MY_ANALYSES: 'my_analyses', // 내가 분석한 이미지
 };
 
 /**
@@ -89,12 +90,43 @@ export function isMyRecruitment(recruitmentId) {
 }
 
 /**
+ * 내가 분석한 이미지 목록 조회
+ * @returns {number[]} 분석 ID 배열
+ */
+export function getMyAnalyses() {
+  try {
+    const data = localStorage.getItem(STORAGE_KEYS.MY_ANALYSES);
+    return data ? JSON.parse(data) : [];
+  } catch (error) {
+    console.error('Failed to get my analyses:', error);
+    return [];
+  }
+}
+
+/**
+ * 내가 분석한 이미지 추가
+ * @param {number} analysisId - 분석 ID
+ */
+export function addMyAnalysis(analysisId) {
+  try {
+    const current = getMyAnalyses();
+    if (!current.includes(analysisId)) {
+      const updated = [...current, analysisId];
+      localStorage.setItem(STORAGE_KEYS.MY_ANALYSES, JSON.stringify(updated));
+    }
+  } catch (error) {
+    console.error('Failed to add my analysis:', error);
+  }
+}
+
+/**
  * 로컬스토리지 초기화 (테스트용)
  */
 export function clearHistory() {
   try {
     localStorage.removeItem(STORAGE_KEYS.MY_RECRUITMENTS);
     localStorage.removeItem(STORAGE_KEYS.MY_PARTICIPATIONS);
+    localStorage.removeItem(STORAGE_KEYS.MY_ANALYSES);
   } catch (error) {
     console.error('Failed to clear history:', error);
   }

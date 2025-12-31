@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { apiService } from '../services/api';
-import { addMyRecruitment } from '../utils/localStorage';
+import { addMyRecruitment, addMyAnalysis } from '../utils/localStorage';
 import Loading from '../components/Loading';
 
 export default function AnalysisPage() {
@@ -102,6 +102,11 @@ export default function AnalysisPage() {
     try {
       const analysisResult = await apiService.analyzeImage(imageFile);
       setResult(analysisResult);
+
+      // 분석 완료 후 로컬스토리지에 저장
+      if (analysisResult.analysis_id) {
+        addMyAnalysis(analysisResult.analysis_id);
+      }
     } catch (error) {
       alert('분석 실패: ' + error.message);
     } finally {
