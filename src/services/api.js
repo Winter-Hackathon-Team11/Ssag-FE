@@ -108,12 +108,18 @@ class ApiService {
    * @returns {Promise<Object>} 생성된 공고 정보
    */
   async createRecruitmentFromAnalysis(analysisId, recruitmentData) {
+    // meeting_place를 item_location으로도 전달
+    const requestBody = {
+      ...recruitmentData,
+      item_location: recruitmentData.meeting_place,
+    };
+
     const response = await fetch(`${API_BASE_URL}/recruitment/from-analysis/${analysisId}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(recruitmentData),
+      body: JSON.stringify(requestBody),
     });
 
     if (!response.ok) {
