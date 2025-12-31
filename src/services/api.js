@@ -170,7 +170,7 @@ class ApiService {
         recruitment_id: item.id,
         image_url: `${API_BASE_URL}/uploads/${item.image_name}`,
         title: item.title,
-        meeting_place: item.location || '위치 미정',
+        meeting_place: item.meeting_place || item.location || '위치 미정',
         required_people: item.required_people,
         current_applicants: 0, // 백엔드에서 제공 안 함, 기본값
         activity_date: item.activity_date,
