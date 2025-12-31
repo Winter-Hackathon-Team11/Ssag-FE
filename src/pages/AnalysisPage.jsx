@@ -162,15 +162,8 @@ export default function AnalysisPage() {
     }
   };
 
-  // 백엔드는 한국어 키로 반환하므로 변환
-  const trashDetails = result ? {
-    plastic: result.trash_summary['플라스틱'] || result.trash_summary.plastic || 0,
-    can: result.trash_summary['캔'] || result.trash_summary.can || 0,
-    vinyl: result.trash_summary['비닐'] || result.trash_summary.vinyl || 0,
-    other: (result.trash_summary['기타'] || result.trash_summary.other || 0) +
-           (result.trash_summary['망'] || result.trash_summary.net || 0) +
-           (result.trash_summary['유리'] || result.trash_summary.glass || 0),
-  } : null;
+  // 백엔드는 한글 키로 반환 - 그대로 사용
+  const trashDetails = result ? result.trash_summary : null;
 
   return (
     <div className="relative max-w-2xl mx-auto h-screen">
@@ -305,7 +298,7 @@ export default function AnalysisPage() {
                     {Object.entries(trashDetails).map(([key, value]) => (
                       <div key={key} className="flex items-center justify-between py-1">
                         <span className="text-sm text-[var(--text-article)]">
-                          {key === 'plastic' ? '플라스틱' : key === 'can' ? '캔' : key === 'vinyl' ? '비닐' : '기타'}
+                          {key}
                         </span>
                         <span className="text-sm text-[var(--text-article)]">{value}개</span>
                       </div>
