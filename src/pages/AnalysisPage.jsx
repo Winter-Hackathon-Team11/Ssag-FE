@@ -117,6 +117,10 @@ export default function AnalysisPage() {
       setResult(analysisResult);
       // 분석 결과를 로컬스토리지에 저장
       saveLastAnalysis(analysisResult);
+      // 백엔드에서 받은 이미지 URL로 업데이트
+      if (analysisResult.image_url) {
+        setSelectedImage(analysisResult.image_url);
+      }
     } catch (error) {
       alert('분석 실패: ' + error.message);
     } finally {
@@ -278,7 +282,7 @@ export default function AnalysisPage() {
           {/* 분석 결과가 있을 때 이미지 */}
           {result && (
             <div className="bg-white rounded-xl overflow-hidden mb-4 h-[192px]">
-              <img src={selectedImage} alt="Analyzed" className="w-full h-full object-cover" />
+              <img src={result.image_url} alt="Analyzed" className="w-full h-full object-cover" />
             </div>
           )}
 
