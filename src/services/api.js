@@ -31,10 +31,15 @@ class ApiService {
     const data = await response.json();
 
     // 백엔드 응답을 프론트 형식에 맞게 변환
+    // image_url이 있으면 사용, 없으면 image_name으로 생성
+    const imageUrl = data.image_url
+      ? `${API_BASE_URL}${data.image_url}`
+      : `${API_BASE_URL}/uploads/${data.image_name}`;
+
     return {
       analysis_id: data.analysis_id,
       image_name: data.image_name,
-      image_url: `${API_BASE_URL}/uploads/${data.image_name}`,
+      image_url: imageUrl,
       trash_summary: data.trash_summary,
       recommended_resources: data.recommended_resources,
       created_at: data.created_at,

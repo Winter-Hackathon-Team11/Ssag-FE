@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { apiService } from '../services/api';
-import { addMyRecruitment } from '../utils/localStorage';
+import { addMyRecruitment, saveLastAnalysis, getLastAnalysis, clearLastAnalysis } from '../utils/localStorage';
 import Loading from '../components/Loading';
 
 export default function AnalysisPage() {
@@ -21,6 +21,19 @@ export default function AnalysisPage() {
   });
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
+
+  // 페이지 로드 시 마지막 분석 결과 복원
+  useEffect(() => {
+    const lastAnalysis = getLastAnalysis();
+    if (lastAnalysis) {
+      setResult(lastAnalysis);
+      setIsCameraMode(false);
+      // 이미지 URL을 selectedImage로 설정
+      if (lastAnalysis.image_url) {
+        setSelectedImage(lastAnalysis.image_url);
+      }
+    }
+  }, []);
 
   // 카메라 시작
   useEffect(() => {
@@ -102,6 +115,8 @@ export default function AnalysisPage() {
     try {
       const analysisResult = await apiService.analyzeImage(imageFile);
       setResult(analysisResult);
+      // 분석 결과를 로컬스토리지에 저장
+      saveLastAnalysis(analysisResult);
     } catch (error) {
       alert('분석 실패: ' + error.message);
     } finally {
@@ -116,6 +131,8 @@ export default function AnalysisPage() {
     setShowForm(false);
     setFormData({ date: '', location: '', note: '' });
     setIsCameraMode(true);
+    // 로컬스토리지에서 마지막 분석 결과 삭제
+    clearLastAnalysis();
   };
 
   const handleCreateRecruitment = () => {
@@ -147,6 +164,9 @@ export default function AnalysisPage() {
 
       // 로컬스토리지에 내가 생성한 공고로 저장
       addMyRecruitment(recruitment.recruitment_id);
+
+      // 분석 결과는 더 이상 필요 없으므로 삭제
+      clearLastAnalysis();
 
       alert('공고가 생성 및 게시되었습니다!');
       navigate(`/recruitment/${recruitment.recruitment_id}`);

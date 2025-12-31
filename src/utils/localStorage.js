@@ -120,6 +120,43 @@ export function addMyAnalysis(analysisId) {
 }
 
 /**
+ * 마지막 분석 결과 저장
+ * @param {Object} analysisResult - 분석 결과 객체
+ */
+export function saveLastAnalysis(analysisResult) {
+  try {
+    localStorage.setItem('last_analysis', JSON.stringify(analysisResult));
+  } catch (error) {
+    console.error('Failed to save last analysis:', error);
+  }
+}
+
+/**
+ * 마지막 분석 결과 조회
+ * @returns {Object|null} 분석 결과 객체 또는 null
+ */
+export function getLastAnalysis() {
+  try {
+    const data = localStorage.getItem('last_analysis');
+    return data ? JSON.parse(data) : null;
+  } catch (error) {
+    console.error('Failed to get last analysis:', error);
+    return null;
+  }
+}
+
+/**
+ * 마지막 분석 결과 삭제
+ */
+export function clearLastAnalysis() {
+  try {
+    localStorage.removeItem('last_analysis');
+  } catch (error) {
+    console.error('Failed to clear last analysis:', error);
+  }
+}
+
+/**
  * 로컬스토리지 초기화 (테스트용)
  */
 export function clearHistory() {
@@ -127,6 +164,7 @@ export function clearHistory() {
     localStorage.removeItem(STORAGE_KEYS.MY_RECRUITMENTS);
     localStorage.removeItem(STORAGE_KEYS.MY_PARTICIPATIONS);
     localStorage.removeItem(STORAGE_KEYS.MY_ANALYSES);
+    localStorage.removeItem('last_analysis');
   } catch (error) {
     console.error('Failed to clear history:', error);
   }
